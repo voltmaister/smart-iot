@@ -63,12 +63,26 @@ $( document ).ready(function() {
                                   try {
                                     log("POST ", post_endpoint, latest_value);
                                     var post_data = JSON.stringify({'source': window.location.href, 'value':latest_value});
-                                    $.ajax({
+                                    /* $.ajax({
                                         type: "POST",
                                         contentType: 'application/json',
                                         url: post_endpoint,
                                         dataType: 'json',
                                         data: post_data
+                                    }) */
+                                    // Connect to MQTT broker
+                                    const client = mqtt.connect('mqtt://192.168.1.17:1883');
+
+                                    // When connected to the broker
+                                    client.on('connect', function () {
+                                        console.log('Connected to MQTT broker')
+                                        
+                                        // Publish data to a topic
+                                        const post_data = { /* your data */ }
+                                        const topic = 'home/test'
+                                        client.publish(topic, 'Hello extensions')
+                                        console.log('Published data to MQTT broker')
+                                        
                                     })
                                     .done(function(){ log(myUUID, 'POST success.', post_data); })
                                     .fail(function(xhr, status, error) { log(myUUID, 'POST fail: ', status, error, xhr); });

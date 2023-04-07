@@ -4,4 +4,9 @@ chrome.browserAction.onClicked.addListener(function (tab) {
             chrome.tabs.executeScript(tab.id, { "file": "contentScript.js" });
         });
     }
+    if (tab.url.indexOf("https://www.tinkercad.com/") != -1) {
+        chrome.tabs.executeScript(tab.id, { "file": "lib/mqtt.min.js" }, function() {
+            chrome.tabs.executeScript(tab.id, { "file": "contentScript.js" });
+        });
+    }
 });
