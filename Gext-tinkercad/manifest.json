@@ -9,5 +9,11 @@
   "background":{
       "scripts":["background.js"]
   },
-  "permissions":["https://www.tinkercad.com/things/*", "storage"]
+  "permissions":["https://www.tinkercad.com/things/*", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.tinkercad.com/*"],
+      "js": ["https://https://unpkg.com/mqtt/dist/mqtt.min.js", "contentScript.js"]
+    }
+  ]
 }
