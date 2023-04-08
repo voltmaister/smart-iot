@@ -78,11 +78,11 @@ $( document ).ready(function() {
                                         console.log('Connected to MQTT broker')
                                         
                                         // Publish data to a topic
-                                        const post_data = { /* your data */ }
-                                        const topic = 'home/test'
-                                        client.publish(topic, 'Hello extensions')
-                                        console.log('Published data to MQTT broker')
-                                        
+                                        const post_data = { /* your data */ };
+                                        const topic = 'home/test';
+                                        client.publish(topic, 'Hello extensions');
+                                        console.log('Published data to MQTT broker');
+                                        prompt("WE did it ");
                                     })
                                     .done(function(){ log(myUUID, 'POST success.', post_data); })
                                     .fail(function(xhr, status, error) { log(myUUID, 'POST fail: ', status, error, xhr); });
