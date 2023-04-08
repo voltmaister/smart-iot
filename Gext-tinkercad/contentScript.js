@@ -1,7 +1,7 @@
 var LOG_PREFIX = "[TinkerCad WireTap] ";
 console.log(LOG_PREFIX, 'Wire tapping TinkerCad?... SUCCESS.');
 
-$( document ).ready(function() {
+$(function() {
 
     var log = function(){
         var args = Array.prototype.slice.call(arguments);
@@ -39,7 +39,8 @@ $( document ).ready(function() {
                 refresh_delay = prompt("Serial monitor sampling interval (msec, >=500): ");
             } while(!containsOnlyDigits.test(refresh_delay) || refresh_delay<500);
             post_endpoint = prompt("POST endpoint: "); 
-            /* post_endpoint = prompt("MQTT BROKER: "); */
+            mqtt_broker = prompt("MQTT broker host (e.g 192.168.1.1): ");
+            mqtt_broker_port = prompt("MQTT broker port: ");
             myUUID = uuidv4();
             log(myUUID, 'Serial monitor sampling period: '+refresh_delay+'msec');
             chrome.storage.local.set({"TCWTuuid": myUUID}, function() {
@@ -50,53 +51,38 @@ $( document ).ready(function() {
             clearTimeout(timeout);
             var h = function(ev){
                 chrome.storage.local.get("TCWTuuid", ({ TCWTuuid }) => {
-                  if ( TCWTuuid==myUUID && canMonitor ){
-                      var text = serial_monitor.text();
-                      log('hello _ tvwudasd')
-                      if (text.length>0){
-                          var lines = text.split("\n");
+                    if ( TCWTuuid==myUUID && canMonitor ){
+                        var text = serial_monitor.text();
+                        if (text.length>0){
+                            var lines = text.split("\n");
                           // console.log('Serial changed: '+ text.split("\n").length);
-                          if ( lines.length>1 ){
-                              var latest_value = lines[lines.length-2];
-                              log(myUUID, 'Last serial monitor value: '+latest_value);
-                              canMonitor = false;
-                              log('hello - endpoint');
-                              if ( post_endpoint && post_endpoint.length>0) {
-                                  try {
-                                    log("POST ", post_endpoint, latest_value);
-                                    var post_data = JSON.stringify({'source': window.location.href, 'value':latest_value});
-                                    $.ajax({
-                                        type: "POST",
-                                        contentType: 'application/json',
-                                        url: post_endpoint,
-                                        dataType: 'json',
-                                        data: post_data
-                                    })
-                                    // Connect to MQTT broker
-                                    /* const client = mqtt.connect(`mqtt://192.168.1.17:1883`);
-                                    log('hello - ftosgi');
-                                    // When connected to the broker
-                                    client.on('connect', function () {
-                                        console.log('Connected to MQTT broker')
-                                        
-                                        // Publish data to a topic
-                                        const post_data = {"value":"key"};
-                                        const topic = 'home/test';
-                                        client.publish(topic, 'Hello extensions');
-                                        console.log('Published data to MQTT broker');
-                                    }) */
+                            if ( lines.length>1 ){
+                                var latest_value = lines[lines.length-2];
+                                log(myUUID, 'Last serial monitor value: '+latest_value);
+                                canMonitor = false;
+                                if ( post_endpoint && post_endpoint.length>0) {
+                                    try {
+                                        log("POST ", post_endpoint, latest_value);
+                                        var post_data = JSON.stringify({'source': window.location.href, 'value':latest_value});
+                                        $.ajax({
+                                            type: "POST",
+                                            contentType: 'application/json',
+                                            url: post_endpoint,
+                                            dataType: 'json',
+                                            data: post_data
+                                        })
                                     .done(function(){ log(myUUID, 'POST success.', post_data); })
                                     .fail(function(xhr, status, error) { log(myUUID, 'POST fail: ', status, error, xhr); });
-                                  }
-                                    catch(err) {
-                                    log( err.message );
-                                  }
-                              }
-                              log(myUUID, 'Sampling serial monitor again in ', refresh_delay);
-                              timeout = setTimeout(function(){ canMonitor = true; }, refresh_delay);
-                          }
-                      }
-                  }
+                                    }
+                                        catch(err) {
+                                        log( err.message );
+                                    }
+                                }
+                                log(myUUID, 'Sampling serial monitor again in ', refresh_delay);
+                                timeout = setTimeout(function(){ canMonitor = true; }, refresh_delay);
+                            }
+                        }
+                    }
                 });
             };
             serial_monitor.bind('DOMSubtreeModified', h);
@@ -107,3 +93,21 @@ $( document ).ready(function() {
     }
     doTap();
 });
+
+
+/* 
+
+                                    const client = mqtt.connect(`mqtt://${mqtt_broker}:${mqtt_broker_port}`);
+                                        console.log('hello - ftosgi');
+                                        // When connected to the broker
+                                        client.on('connect', function () {
+                                            console.log('Connected to MQTT broker')
+                                            
+                                            // Publish data to a topic
+                                            const topic = 'home/test';
+                                            client.publish(topic, 'Hello extensions');
+                                            console.log('Published data to MQTT broker');
+                                        }) 
+                                        
+                                        
+*/
