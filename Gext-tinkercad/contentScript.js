@@ -1,6 +1,27 @@
 var LOG_PREFIX = "[TinkerCad WireTap] ";
 console.log(LOG_PREFIX, 'Wire tapping TinkerCad?... SUCCESS.');
-
+const mqtt_broker = "test.mosquitto.org";
+const mqtt_broker_port = 8884;
+const mqttClient = new window.Paho.MQTT.Client(mqtt_broker, mqtt_broker_port, "clientId");
+if (mqttClient) {
+    mqttClient.useSSL = true;
+    mqttClient.connect({
+        onSuccess: function() {
+            console.log("Connected to MQTT broker");
+            const topic = "home/test";
+            const message = new window.Paho.MQTT.Message("Hello, MQTT");
+            message.destinationName = topic;
+            mqttClient.send(message);
+        },
+        onFailure: function(err) {
+            console.error("Failed to connect to MQTT broker:", err);
+        }
+    });
+  } else {
+    console.error('Paho.MQTT.Client is not defined');
+  }
+/* const mqttClient = new window.Paho.MQTT.Client("192.168.1.17", 1883, "guftos");
+ */
 $(function() {
 
     var log = function(){
@@ -76,7 +97,7 @@ $(function() {
                                     }
                                         catch(err) {
                                         log( err.message );
-                                    }
+                                        }
                                 }
                                 log(myUUID, 'Sampling serial monitor again in ', refresh_delay);
                                 timeout = setTimeout(function(){ canMonitor = true; }, refresh_delay);
