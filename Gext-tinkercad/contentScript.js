@@ -38,8 +38,8 @@ $( document ).ready(function() {
             do {
                 refresh_delay = prompt("Serial monitor sampling interval (msec, >=500): ");
             } while(!containsOnlyDigits.test(refresh_delay) || refresh_delay<500);
-            post_endpoint = prompt("POST endpoint: ");
-
+            post_endpoint = prompt("POST endpoint: "); 
+            /* post_endpoint = prompt("MQTT BROKER: "); */
             myUUID = uuidv4();
             log(myUUID, 'Serial monitor sampling period: '+refresh_delay+'msec');
             chrome.storage.local.set({"TCWTuuid": myUUID}, function() {
@@ -52,6 +52,7 @@ $( document ).ready(function() {
                 chrome.storage.local.get("TCWTuuid", ({ TCWTuuid }) => {
                   if ( TCWTuuid==myUUID && canMonitor ){
                       var text = serial_monitor.text();
+                      log('hello _ tvwudasd')
                       if (text.length>0){
                           var lines = text.split("\n");
                           // console.log('Serial changed: '+ text.split("\n").length);
@@ -59,31 +60,31 @@ $( document ).ready(function() {
                               var latest_value = lines[lines.length-2];
                               log(myUUID, 'Last serial monitor value: '+latest_value);
                               canMonitor = false;
+                              log('hello - endpoint');
                               if ( post_endpoint && post_endpoint.length>0) {
                                   try {
                                     log("POST ", post_endpoint, latest_value);
                                     var post_data = JSON.stringify({'source': window.location.href, 'value':latest_value});
-                                    /* $.ajax({
+                                    $.ajax({
                                         type: "POST",
                                         contentType: 'application/json',
                                         url: post_endpoint,
                                         dataType: 'json',
                                         data: post_data
-                                    }) */
+                                    })
                                     // Connect to MQTT broker
-                                    const client = mqtt.connect('mqtt://192.168.1.17:1883');
-
+                                    /* const client = mqtt.connect(`mqtt://192.168.1.17:1883`);
+                                    log('hello - ftosgi');
                                     // When connected to the broker
                                     client.on('connect', function () {
                                         console.log('Connected to MQTT broker')
                                         
                                         // Publish data to a topic
-                                        const post_data = { /* your data */ };
+                                        const post_data = {"value":"key"};
                                         const topic = 'home/test';
                                         client.publish(topic, 'Hello extensions');
                                         console.log('Published data to MQTT broker');
-                                        prompt("WE did it ");
-                                    })
+                                    }) */
                                     .done(function(){ log(myUUID, 'POST success.', post_data); })
                                     .fail(function(xhr, status, error) { log(myUUID, 'POST fail: ', status, error, xhr); });
                                   }
