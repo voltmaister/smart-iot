@@ -1,6 +1,6 @@
 var LOG_PREFIX = "[TinkerCad WireTap] ";
 console.log(LOG_PREFIX, 'Wire tapping TinkerCad?... SUCCESS.');
-const mqtt_broker = "test.mosquitto.org";
+/* const mqtt_broker = "test.mosquitto.org";
 const mqtt_broker_port = 8884;
 const mqttClient = new window.Paho.MQTT.Client(mqtt_broker, mqtt_broker_port, "clientId");
 if (mqttClient) {
@@ -19,7 +19,7 @@ if (mqttClient) {
     });
   } else {
     console.error('Paho.MQTT.Client is not defined');
-  }
+  } */
 /* const mqttClient = new window.Paho.MQTT.Client("192.168.1.17", 1883, "guftos");
  */
 $(function() {
